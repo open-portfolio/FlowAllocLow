@@ -16,8 +16,8 @@ let package = Package(
         .library(name: "FlowAllocLow", targets: ["FlowAllocLow"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/openalloc/FlowXCT.git", from: "1.1.0"),
-        .package(url: "https://github.com/openalloc/FlowBase.git", from: "1.1.0"),
+        .package(url: "https://github.com/openalloc/FlowXCT.git", from: "1.0.0"),
+        .package(url: "https://github.com/openalloc/FlowBase.git", from: "1.0.0"),
     ],
     targets: [
         .target(
