@@ -10,13 +10,12 @@
 
 import Foundation
 
-import FlowBase
 import AllocData
-
+import FlowBase
 
 public struct Purchase: Hashable, Identifiable {
     public let id = UUID()
-    
+
     // asset class of new holding to purchase
     public var assetKey: AssetKey
 
@@ -34,8 +33,7 @@ public struct Purchase: Hashable, Identifiable {
         // super.hash(into: &hasher)
     }
 
-    public static func getPurchaseMap(rebalanceMap: RebalanceMap) -> PurchaseMap
-    {
+    public static func getPurchaseMap(rebalanceMap: RebalanceMap) -> PurchaseMap {
         let purchases = getPurchases(rebalanceMap: rebalanceMap)
         let assetKeys = purchases.map(\.assetKey)
         return Dictionary(uniqueKeysWithValues: zip(assetKeys, purchases))

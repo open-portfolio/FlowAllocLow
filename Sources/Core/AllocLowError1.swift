@@ -10,7 +10,7 @@
 
 import Foundation
 
-//TODO combine with AllocLowError2
+// TODO: combine with AllocLowError2
 public enum AllocLowError1: Error, Equatable, CustomStringConvertible {
     case invalidFlowValues(_ msg: String)
     case unableToGetMidpoint

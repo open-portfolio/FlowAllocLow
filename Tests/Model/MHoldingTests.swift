@@ -10,13 +10,12 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
 class MHoldingTests2: XCTestCase {
-    
     func testAssetClasses() throws {
         let equities = "Equities"
         let bonds = "Bonds"
@@ -32,7 +31,6 @@ class MHoldingTests2: XCTestCase {
         XCTAssertEqual(expected, actual)
     }
 
-    
     func testAnyShareCountAllowed() throws {
         for shareCount in [-100, -0.01, 0, 0.01, 100] {
             let holding = MHolding(accountID: "1", securityID: "SPY", lotID: "", shareCount: shareCount, shareBasis: 1) // , sharePrice: 1

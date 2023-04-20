@@ -12,7 +12,6 @@ import Foundation
 
 import FlowBase
 
-
 // need unique values to populate LazyVGrid, so this wrapper used
 open class BaseItem: Hashable, Identifiable {
     public var id: Int { hashValue }

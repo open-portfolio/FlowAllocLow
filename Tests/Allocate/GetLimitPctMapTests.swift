@@ -10,19 +10,18 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
 class GetLimitPctMapTests: XCTestCase {
-    
     let account1 = MAccount.Key(accountID: "1")
     let account2 = MAccount.Key(accountID: "2")
     let bond = MAsset.Key(assetID: "Bond")
     let lc = MAsset.Key(assetID: "LC")
     let gold = MAsset.Key(assetID: "Gold")
-    
+
     func testNoCaps() throws {
         let actual = getLimitPctMap([])
         let expected = LimitPctMap()

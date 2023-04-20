@@ -12,7 +12,6 @@ import AllocData
 
 import FlowBase
 
-
 public typealias AccountAmountMap = [AccountKey: Double]
 public typealias AccountAssetValueMap = [AccountKey: AssetValueMap]
 public typealias AccountCapacitiesMap = [AccountKey: Double]

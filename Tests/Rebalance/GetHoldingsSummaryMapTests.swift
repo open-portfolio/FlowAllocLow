@@ -10,8 +10,8 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 import FlowXCT
 
 @testable import FlowAllocLow
@@ -43,11 +43,11 @@ class GetHoldingsSummaryMapTests: XCTestCase {
     let bond = MAsset.Key(assetID: "Bond")
     let lc = MAsset.Key(assetID: "LC")
     let corpbond = MAsset.Key(assetID: "CorpBond")
-    
+
     let agg = MSecurity.Key(securityID: "AGG")
     let spy = MSecurity.Key(securityID: "SPY")
     let corp = MSecurity.Key(securityID: "CORP")
-    
+
     var holdings: [MHolding]!
     var model: BaseModel!
     var accountHoldingsMap: AccountHoldingsMap!
@@ -71,10 +71,9 @@ class GetHoldingsSummaryMapTests: XCTestCase {
         let accountKey1 = account1.primaryKey
         let accountKey2 = account2.primaryKey
         let accountKey3 = account3.primaryKey
-        
 
         let expected: AccountAssetHoldingsSummaryMap = [accountKey1: [lc: HoldingsSummary(presentValue: (12 + 5) * 100, costBasis: 12 * 110 + 5 * 70, count: 2, tickerShareMap: [spy: 17]),
-                                                              bond: HoldingsSummary(presentValue: 10 * 100, costBasis: 10 * 80, count: 1, tickerShareMap: [agg: 10])],
+                                                                      bond: HoldingsSummary(presentValue: 10 * 100, costBasis: 10 * 80, count: 1, tickerShareMap: [agg: 10])],
                                                         accountKey2: [corpbond: HoldingsSummary(presentValue: 1300, costBasis: 910, count: 1, tickerShareMap: [corp: 13])],
                                                         accountKey3: [bond: HoldingsSummary(presentValue: 8 * 100, costBasis: 8 * 70, count: 1, tickerShareMap: [agg: 8])]]
         let actual = HoldingsSummary.getAccountAssetSummaryMap(accounts.map(\.primaryKey), model.makeAccountHoldingsMap(), model.makeSecurityMap())

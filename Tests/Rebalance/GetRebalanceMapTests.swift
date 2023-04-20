@@ -11,8 +11,8 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 

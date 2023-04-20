@@ -12,7 +12,6 @@ import Foundation
 
 import FlowBase
 
-
 // horizontal limits
 func getAssetAccountLimitMap(accountKeys: [AccountKey],
                              baseAllocs: [AssetValue],
@@ -36,7 +35,7 @@ func getAssetAccountLimitMap(accountKeys: [AccountKey],
 
             map[accountKey] = limitPct * accountCapacity
         }
-        
+
         dict[alloc.assetKey] = map
     }
 }
@@ -58,7 +57,7 @@ func getAccountUserAssetLimitMap(accountKeys: [AccountKey],
         let limitPctMap = getLimitPctMap(caps)
 
         let userAssetLimitMap: UserAssetLimitMap = baseAllocs.reduce(into: [:]) { map, alloc in
-            
+
             let userLimitAccountPct: Double = limitPctMap[alloc.assetKey] ?? 1.0
             let userLimit: Double = userLimitAccountPct * accountCapacity
 
@@ -81,7 +80,7 @@ func getAccountUserVertLimitMap(accountKeys: [AccountKey],
     }
 
     let allocMap = AssetValue.getAssetValueMap(from: baseAllocs)
-    
+
     return try accountKeys.reduce(into: [:]) { dict, accountKey in
         guard let accountCapacity = accountCapacitiesMap[accountKey] else { return }
 
@@ -108,14 +107,14 @@ internal func getUserVertLimits(allocMap: AssetValueMap,
             unrestricted_sum += targetPct
         }
     }
-    
+
     guard restricted_sum + unrestricted_sum > 0 else { throw AllocLowError1.invalidLimits }
-    
+
     return allocMap.reduce(into: [:]) { map, entry in
         let (assetKey, targetPct) = entry
-        
+
         let userLimit = limitPctMap[assetKey] ?? 1.0
-        
+
         let xRatio: Double = {
             if userLimit <= targetPct {
                 return userLimit
@@ -123,7 +122,7 @@ internal func getUserVertLimits(allocMap: AssetValueMap,
                 return targetPct / unrestricted_sum * (1 - restricted_sum)
             }
         }()
-        
+
         map[assetKey] = xRatio * accountCapacity
     }
 }

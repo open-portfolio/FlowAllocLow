@@ -10,13 +10,12 @@
 
 import Foundation
 
-import FlowBase
 import AllocData
+import FlowBase
 
 public struct Sale: Hashable, Identifiable {
-    
     public let id = UUID()
-    
+
     public static let epsilon = 0.01 // nearest 'penny'
 
     // asset class of holdings to liquidate
@@ -72,14 +71,14 @@ public extension Sale {
     static func getSaleMap(_ rebalanceMap: AssetValueMap,
                            _ assetHoldingsMap: AssetHoldingsMap,
                            _ securityMap: SecurityMap,
-                           //_ cashAssetKeySet: AssetKeySet,
+                           // _ cashAssetKeySet: AssetKeySet,
                            minimumSaleAmount: Double = 0,
                            minimumPositionValue: Double = 0) -> SaleMap
     {
         let sales = getSales(rebalanceMap,
                              assetHoldingsMap,
                              securityMap,
-                             //cashAssetKeySet,
+                             // cashAssetKeySet,
                              minimumSaleAmount: minimumSaleAmount,
                              minimumPositionValue: minimumPositionValue)
         let assetKeys = sales.map(\.assetKey)

@@ -14,14 +14,13 @@ import AllocData
 
 import FlowBase
 
-
 public extension MRebalanceAllocation {
-    
     static func getAllocations(_ accountKeys: [AccountKey],
                                _ accountAmountMap: AccountAmountMap,
                                _ accountAllocMap: AccountAssetValueMap,
                                _ accountMap: AccountMap,
-                               _ assetMap: AssetMap) -> [MRebalanceAllocation] {
+                               _ assetMap: AssetMap) -> [MRebalanceAllocation]
+    {
         accountKeys.reduce(into: []) { array, accountKey in
             guard let account = accountMap[accountKey],
                   let assetValueMap = accountAllocMap[accountKey]

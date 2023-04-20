@@ -15,10 +15,9 @@ import AllocData
 
 import FlowBase
 
-
 let epsilon = 0.0001 // accuracy of Double comparisons
 
-//let alog = Logger(subsystem: "app.flowallocator", category: "Allocate")
+// let alog = Logger(subsystem: "app.flowallocator", category: "Allocate")
 
 public func getAccountAllocationMap(allocs: [AssetValue],
                                     accountKeys: [AccountKey],
@@ -30,21 +29,21 @@ public func getAccountAllocationMap(allocs: [AssetValue],
                                     isStrict: Bool = false) throws -> AccountAssetValueMap
 {
     var remainingAssetClassCapacities = allocs.map(\.value)
-    
+
     let map: AccountAssetValueMap = try accountKeys.enumerated().reduce(into: [:]) { map, entry in
         let (accountIndex, accountKey) = entry
-        
+
         // need to draw this down to 0 for account, or abort allocation (e.g., 33%)
         guard let accountCapacity = accountCapacitiesMap[accountKey],
               accountCapacity.isGreater(than: 0.0, accuracy: epsilon)
         else {
-            map[accountKey] = [:]  // so that cells will be rendered despite no allocation/funds
+            map[accountKey] = [:] // so that cells will be rendered despite no allocation/funds
             return
         }
-        
+
         guard let userVertLimitMap = accountUserVertLimitMap[accountKey] else { throw AllocLowError1.missingVertLimit }
         guard let userAssetLimitMap = accountUserAssetLimitMap[accountKey] else { throw AllocLowError1.missingAssetLimit }
-        
+
         map[accountKey] = try getAllocationMap(accountKeys: accountKeys,
                                                accountIndex: accountIndex,
                                                allocs: allocs,
@@ -56,7 +55,7 @@ public func getAccountAllocationMap(allocs: [AssetValue],
                                                remainingAssetClassCapacities: &remainingAssetClassCapacities,
                                                isStrict: isStrict)
     }
-    
+
     return map
 }
 
@@ -73,16 +72,16 @@ func getAllocationMap(accountKeys: [AccountKey],
 {
     // Horizontal: starts as 100% of account's share of strategy, and decreases (vertical)
     var remainingToAllocateInAccount = accountCapacity
-    
+
     return try allocs.enumerated().reduce(into: [:]) { map, entry in
         let (allocIndex, alloc) = entry
-        
+
         guard remainingToAllocateInAccount.isGreater(than: 0.0, accuracy: epsilon) else { return }
-        
+
         guard let userVertLimit = userVertLimitMap[alloc.assetKey] else { throw AllocLowError1.missingVertLimit }
         guard let userAssetLimit = userAssetLimitMap[alloc.assetKey] else { throw AllocLowError1.missingAssetLimit }
         let accountLimitMap = assetAccountLimitMap[alloc.assetKey] ?? [:]
-        
+
         let netAllocation = try getAllocation(accountKeys: accountKeys,
                                               alloc: alloc,
                                               allocIndex: allocIndex,
@@ -95,15 +94,15 @@ func getAllocationMap(accountKeys: [AccountKey],
                                               userAssetLimit: userAssetLimit,
                                               remainingToAllocateInAccount: remainingToAllocateInAccount,
                                               remainingAssetClassCapacities: &remainingAssetClassCapacities)
-        
+
         remainingToAllocateInAccount -= netAllocation
-        
-        //print("netAllocation=\(netAllocation) remainingToAllocateInAccount=\(remainingToAllocateInAccount)")
-        
+
+        // print("netAllocation=\(netAllocation) remainingToAllocateInAccount=\(remainingToAllocateInAccount)")
+
         // if less than zero, but within tolerance, coerce to zero, to avoid Core Data
         // validation complaining about a negative value.
         let netAllocation_ = netAllocation.coerceIfEqual(to: 0.0, accuracy: epsilon)
-        
+
         map[alloc.assetKey] = netAllocation_ / accountCapacity
     }
 }
@@ -124,75 +123,75 @@ func getAllocation(accountKeys: [AccountKey],
 {
     // is the folio's asset class explicitly supported by this account?
     // guard let assetID = strategySlice.assetID else { throw StrategySliceError.missingAssetClass }
-    
+
     // remaining capacity to allocate in current assetID, across subsequent accounts (horizontal)
     let remainingAssetClassCapacity = remainingAssetClassCapacities[allocIndex]
-    
+
     // os_log("[%@] %@ strategySliceIndex=%d remainingAssetClassCapacity=%0.4f", #function, strategySlice.assetID, strategySliceIndex, remainingAssetClassCapacity)
-    
+
     guard remainingAssetClassCapacity.isGreater(than: 0, accuracy: epsilon) else { return 0 }
-    
-    //print("remainingAssetClassCapacities=\(remainingAssetClassCapacities) index=\(strategySliceIndex)")
-    
+
+    // print("remainingAssetClassCapacities=\(remainingAssetClassCapacities) index=\(strategySliceIndex)")
+
     // remaining capacity to allocate in subsequent asset classes, across all accounts
     let forwardAssetClassCapacity = remainingAssetClassCapacities.forwardSum(start: allocIndex + 1)
-    
+
     // os_log("[%@] GGG forwardAssetCapacity=%0.4f", #function, forwardAssetClassCapacity)
-    
+
     // user will tolerate up to 100% of the account to be allocated to an asset class
     // e.g., 100% of $64K Roth in SPY
-    
+
     // calculate the user-suggested limit on allocations for this asset class for all subsequent accounts
     // e.g., the user wishes to limit bonds to 0% in the taxable (rightmost) account
     let forwardAssetClassLimit: Double = accountLimitMap.forwardSum(order: accountKeys, start: accountIndex + 1)
-    
-    //print("forwardAssetClassLimit=\(forwardAssetClassLimit) assetID=\(strategySlice.assetID)")
-    
+
+    // print("forwardAssetClassLimit=\(forwardAssetClassLimit) assetID=\(strategySlice.assetID)")
+
     // os_log("[%@] HHH forwardAssetClassLimit=%0.4f", #function, forwardAssetClassLimit)
-    
+
     let skewedAllocFlowMode = getSkewedAllocFlowMode(rawAllocFlowMode: allocFlowMode)
-    
+
     let flowTarget = getFlowTarget(targetPct: alloc.value,
                                    accountCapacity: accountCapacity,
                                    allocFlowMode: skewedAllocFlowMode)
-    
+
     let surplusRequired = getSurplusRequired(remainingAssetClassCapacity: remainingAssetClassCapacity,
                                              forwardAssetClassLimit: forwardAssetClassLimit,
                                              flowTarget: flowTarget)
-    
+
     // suggest a limit for the current cap based on user preference and degree to which we're mirroring
     let userMaxLimit = getUserMaxLimit(userLimit: userAssetLimit,
                                        flowTarget: flowTarget,
                                        accountCapacity: accountCapacity,
                                        surplusRequired: surplusRequired)
-    
+
     // os_log("[%@] cap flowTarget=%0.4f surplusRequired=%0.4f userMaxLimit=%0.4f", #function, flowTarget, surplusRequired, userMaxLimit)
-    
+
     // limit amount allocated to asset class in account, if specified in allocation slice
     let netAllocation = getStrategyPct(remainingAccountCapacity: remainingToAllocateInAccount,
                                        remainingAssetClassCapacity: remainingAssetClassCapacity,
                                        forwardAssetClassCapacity: forwardAssetClassCapacity,
                                        userMaxLimit: userMaxLimit,
                                        userVertLimit: userVertLimit)
-    
-    //print("remainingAssetClassCapacity=\(remainingAssetClassCapacity) forwardAssetClassCapacity=\(forwardAssetClassCapacity) forwardAssetClassLimit=\(forwardAssetClassLimit) skewedAllocFlowMode=\(skewedAllocFlowMode) flowTarget=\(flowTarget) surplusRequired=\(surplusRequired) userMaxLimit=\(userMaxLimit) netAllocation=\(netAllocation)")
-    
+
+    // print("remainingAssetClassCapacity=\(remainingAssetClassCapacity) forwardAssetClassCapacity=\(forwardAssetClassCapacity) forwardAssetClassLimit=\(forwardAssetClassLimit) skewedAllocFlowMode=\(skewedAllocFlowMode) flowTarget=\(flowTarget) surplusRequired=\(surplusRequired) userMaxLimit=\(userMaxLimit) netAllocation=\(netAllocation)")
+
     if isStrict, netAllocation > userAssetLimit {
         throw AllocLowError1.userLimitExceededUnderStrict
     }
-    
+
     // os_log("[%@] MMM netAllocation=%0.4f", #function, netAllocation)
-    
+
     guard netAllocation.isGreater(than: 0.0, accuracy: epsilon) else { return 0 }
-    
+
     // for the benefit of future accounts, deduct our current allocation
     remainingAssetClassCapacities[allocIndex] -= netAllocation
-    
+
     // if substantially less than zero, raise the alarm
     if netAllocation.isLess(than: 0.0, accuracy: epsilon) {
         throw AllocLowError1.unexpectedResult("netSlice less than zero")
     }
-    
+
     return netAllocation
 }
 
@@ -206,7 +205,7 @@ func getFlowTarget(targetPct: Double,
                    allocFlowMode: Double) -> Double
 {
     let mirrorTarget = targetPct * accountCapacity
-    
+
     return mirrorTarget + ((targetPct - mirrorTarget) * allocFlowMode)
 }
 
@@ -231,7 +230,7 @@ func getUserMaxLimit(userLimit: Double,
                      surplusRequired: Double) -> Double
 {
     let baseLimit = min(userLimit, flowTarget)
-    
+
     return min(accountCapacity, baseLimit + surplusRequired)
 }
 
@@ -254,13 +253,13 @@ func getStrategyPct(remainingAccountCapacity: Double,
 {
     // can allocate at most
     let a = min(remainingAccountCapacity, remainingAssetClassCapacity)
-    
+
     // must allocate at least
     let b = max(0, remainingAccountCapacity - forwardAssetClassCapacity)
-    
+
     // user wants to allocate at most
     let c = max(userMaxLimit, userVertLimit)
-    
+
     return min(a, max(b, c))
 }
 

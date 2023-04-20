@@ -12,7 +12,6 @@ import Foundation
 
 import FlowBase
 
-
 open class BaseRow: Hashable, Identifiable {
     public var id: Int { hashValue }
     public var assetKey: AssetKey

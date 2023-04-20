@@ -15,7 +15,6 @@ import AllocData
 import FlowBase
 
 public extension MAllocation {
-
     private static func getAllocations(strategyKey: StrategyKey,
                                        allocations: [MAllocation],
                                        filteredBy assetKeys: AssetKeySet) -> [MAllocation]

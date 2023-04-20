@@ -10,13 +10,12 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
 class MRebalanceSaleMapTests: XCTestCase {
-    
     let account1 = MAccount.Key(accountID: "1")
     let account2 = MAccount.Key(accountID: "2")
     let bond = MAsset.Key(assetID: "Bond")
@@ -27,7 +26,7 @@ class MRebalanceSaleMapTests: XCTestCase {
         let purchases = MRebalanceSale.getSales(map)
         XCTAssertTrue(purchases.count == 0)
     }
-    
+
     func testSingleAccountNoSales() throws {
         let map: AccountSalesMap = [account1: []]
         let purchases = MRebalanceSale.getSales(map)
@@ -49,7 +48,7 @@ class MRebalanceSaleMapTests: XCTestCase {
         let map: AccountSalesMap = [account1: [sale]]
         let actual = MRebalanceSale.getSales(map)
         let expected: [MRebalanceSale] = [
-            MRebalanceSale(accountID: "1", securityID: "BND", lotID: "", amount: 20.00, shareCount: 1, liquidateAll: true)
+            MRebalanceSale(accountID: "1", securityID: "BND", lotID: "", amount: 20.00, shareCount: 1, liquidateAll: true),
         ]
         XCTAssertEqual(expected, actual)
     }
@@ -62,7 +61,7 @@ class MRebalanceSaleMapTests: XCTestCase {
         let map: AccountSalesMap = [account1: [sale]]
         let actual = MRebalanceSale.getSales(map)
         let expected: [MRebalanceSale] = [
-            MRebalanceSale(accountID: "1", securityID: "BND", lotID: "", amount: 20 * fraction, shareCount: 3.0 * fraction, liquidateAll: false)
+            MRebalanceSale(accountID: "1", securityID: "BND", lotID: "", amount: 20 * fraction, shareCount: 3.0 * fraction, liquidateAll: false),
         ]
         XCTAssertEqual(expected, actual)
     }
@@ -77,11 +76,11 @@ class MRebalanceSaleMapTests: XCTestCase {
         let actual = MRebalanceSale.getSales(map)
         let expected: [MRebalanceSale] = [
             MRebalanceSale(accountID: "1", securityID: "BND", lotID: "", amount: 10.00, shareCount: 1, liquidateAll: true),
-            MRebalanceSale(accountID: "1", securityID: "AGG", lotID: "", amount: 20.00, shareCount: 2, liquidateAll: true)
+            MRebalanceSale(accountID: "1", securityID: "AGG", lotID: "", amount: 20.00, shareCount: 2, liquidateAll: true),
         ]
         XCTAssertEqual(expected, actual)
     }
-    
+
     func testSingleAccountTwoSaleWithOneLH() throws {
         let holding1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1)
         let holding2 = MHolding(accountID: "1", securityID: "SPY", lotID: "", shareCount: 2)
@@ -93,11 +92,10 @@ class MRebalanceSaleMapTests: XCTestCase {
         let actual = MRebalanceSale.getSales(map)
         let expected: [MRebalanceSale] = [
             MRebalanceSale(accountID: "1", securityID: "BND", lotID: "", amount: 10.00, shareCount: 1, liquidateAll: true),
-            MRebalanceSale(accountID: "1", securityID: "SPY", lotID: "", amount: 20.00, shareCount: 2, liquidateAll: true)
+            MRebalanceSale(accountID: "1", securityID: "SPY", lotID: "", amount: 20.00, shareCount: 2, liquidateAll: true),
         ]
         XCTAssertEqual(expected, actual)
     }
-
 
     func testDualAccountDualSaleWithTwoLHs() throws {
         let holding1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1)
@@ -120,5 +118,4 @@ class MRebalanceSaleMapTests: XCTestCase {
         ]
         XCTAssertEqual(Set(expected), Set(actual))
     }
-
 }

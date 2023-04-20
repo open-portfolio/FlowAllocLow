@@ -14,7 +14,6 @@ import AllocData
 
 import FlowBase
 
-
 // representing all (fraction=1) or part of a holding (fraction<1) to liquidate
 public struct LiquidateHolding: Hashable, Encodable {
     public let holding: MHolding

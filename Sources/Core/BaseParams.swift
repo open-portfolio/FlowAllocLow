@@ -10,8 +10,8 @@
 
 import Foundation
 
-import FlowBase
 import AllocData
+import FlowBase
 
 public struct BaseParams: Hashable, Codable, CustomStringConvertible {
     public var accountKeys: [AccountKey]
@@ -67,7 +67,7 @@ public struct BaseParams: Hashable, Codable, CustomStringConvertible {
         hasher.combine(fixedAccountKeys)
     }
 
-    public func validate(epsilon: Double = 0.0001) throws {
+    public func validate(epsilon _: Double = 0.0001) throws {
         guard accountKeys.count > 0 else { throw AllocLowError2.invalidParams("missing accounts") }
         guard assetKeys.count > 0 else { throw AllocLowError2.invalidParams("missing allocation") }
         guard (0.0 ... 1.0).contains(flowMode) else { throw AllocLowError2.invalidParams("flowMode must be in range 0...1 [\(description)]") }
@@ -79,22 +79,22 @@ public struct BaseParams: Hashable, Codable, CustomStringConvertible {
     }
 
     // update with new indexes, trying to preserve order where possible
-    mutating public func update(nuAccountKeys: [AccountKey],
+    public mutating func update(nuAccountKeys: [AccountKey],
                                 nuAssetKeys: [AssetKey],
                                 nuFixedAccountKeys: [AccountKey])
     {
         if Set(nuAccountKeys) != Set(accountKeys) {
-            //print("flowParams: updating \(nuAccountKeys)")
+            // print("flowParams: updating \(nuAccountKeys)")
             accountKeys = nuAccountKeys
         }
 
         if Set(nuAssetKeys) != Set(assetKeys) {
-            //print("flowParams: updating \(nuAssetKeys)")
+            // print("flowParams: updating \(nuAssetKeys)")
             assetKeys = nuAssetKeys
         }
 
         if Set(nuFixedAccountKeys) != Set(fixedAccountKeys) {
-            //print("surgeParams: updating \(nuFixedAccountKeys)")
+            // print("surgeParams: updating \(nuFixedAccountKeys)")
             fixedAccountKeys = nuFixedAccountKeys
         }
     }

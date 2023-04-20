@@ -10,14 +10,13 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 import FlowXCT
 
 @testable import FlowAllocLow
 
 final class AllocMiscTests: XCTestCase {
-    
     let bond = MAsset.Key(assetID: "Bond")
     let lc = MAsset.Key(assetID: "LC")
     let cash = MAsset.Key(assetID: "Cash")
@@ -30,7 +29,7 @@ final class AllocMiscTests: XCTestCase {
         1001,Brokerage,true,true
         1002,IRA,false,true
         """
-  
+
         let allocationsCSV = """
         allocationStrategyID,allocationAssetID,targetPct,isLocked
         MyAlloc,LC,0.5,false
@@ -38,12 +37,12 @@ final class AllocMiscTests: XCTestCase {
         MyAlloc,Gold,0.1,false
         MyAlloc,Cash,0.1,false
         """
-        
+
         let strategiesCSV = """
         strategyID,title
         MyAlloc,My Portfolio Allocation
         """
-        
+
         let assetsCSV = """
         assetID,title,colorCode,parentAssetID
         LC,Large Cap Blend,137,Total
@@ -52,7 +51,7 @@ final class AllocMiscTests: XCTestCase {
         Cash,Cash & Cash Equivalent,120,
         Total,Total Market,136,
         """
-        
+
         let holdingsCSV = """
         holdingAccountID,holdingSecurityID,holdingLotID,shareCount,shareBasis,acquiredAt
         1003,CORE,,7500.0,1.0
@@ -63,7 +62,7 @@ final class AllocMiscTests: XCTestCase {
         1002,VOO,,31.0,396.0
         1002,BND,,87.0,86.0
         """
-        
+
         let securitiesCSV = """
         securityID,securityAssetID,sharePrice,updatedAt,securityTrackerID
         CORE,Cash,1.0,2021-07-08,
@@ -76,17 +75,17 @@ final class AllocMiscTests: XCTestCase {
         """
 
         var model = BaseModel()
-        
-        //var rr = [AllocRowed.DecodedRow]()
+
+        // var rr = [AllocRowed.DecodedRow]()
         for csv in [accountsCSV, allocationsCSV, strategiesCSV, assetsCSV, holdingsCSV, securitiesCSV] {
             _ = try model.detectDecodeImport(data: csv.data(using: .utf8)!, url: URL(fileURLWithPath: "foo.csv"))
         }
-        
+
         let allocs = AssetValue.getAssetValues(allocations: model.allocations)
-        let flowMode = 0.0  // mirror
+        let flowMode = 0.0 // mirror
         let account1 = MAccount.Key(accountID: "1001")
         let account2 = MAccount.Key(accountID: "1002")
-        let accountKeys = [account2, account1] //activeAccounts.map(\.primaryKey)
+        let accountKeys = [account2, account1] // activeAccounts.map(\.primaryKey)
         let accountHoldingsMap = model.makeAccountHoldingsMap()
         let securityMap = model.makeSecurityMap()
         let accountPVMap = MAccount.getAccountPresentValueMap(accountKeys, accountHoldingsMap, securityMap)
@@ -94,7 +93,7 @@ final class AllocMiscTests: XCTestCase {
         let assetAccountLimitMap = getAssetAccountLimitMap(accountKeys: accountKeys, baseAllocs: allocs, accountCapacitiesMap: capacitiesMap, accountCapsMap: [:])
         let vertLimitMap = try getAccountUserVertLimitMap(accountKeys: accountKeys, baseAllocs: allocs, accountCapacitiesMap: capacitiesMap, accountCapsMap: [:])
         let userLimitMap = try getAccountUserAssetLimitMap(accountKeys: accountKeys, baseAllocs: allocs, accountCapacitiesMap: capacitiesMap, accountCapsMap: [:])
-        
+
         let actual = try getAccountAllocationMap(allocs: allocs,
                                                  accountKeys: accountKeys,
                                                  allocFlowMode: flowMode,
@@ -102,12 +101,12 @@ final class AllocMiscTests: XCTestCase {
                                                  accountUserVertLimitMap: vertLimitMap,
                                                  accountUserAssetLimitMap: userLimitMap,
                                                  accountCapacitiesMap: capacitiesMap)
-        
+
         let expected = [
-            account1: [ lc: 0.5, gold: 0.1, cash: 0.1, bond: 0.3 ],
-            account2: [ lc: 0.5, gold: 0.1, cash: 0.1, bond: 0.3 ]
+            account1: [lc: 0.5, gold: 0.1, cash: 0.1, bond: 0.3],
+            account2: [lc: 0.5, gold: 0.1, cash: 0.1, bond: 0.3],
         ]
-        
+
         XCTAssertEqual(expected[account1]!, actual[account1]!, accuracy: 0.0001)
         XCTAssertEqual(expected[account2]!, actual[account2]!, accuracy: 0.0001)
     }

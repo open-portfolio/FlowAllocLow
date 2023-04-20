@@ -10,14 +10,14 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
 class GetLiquidateHoldingsTests: XCTestCase {
     var securityMap: SecurityMap!
-    
+
     let account1 = MAccount.Key(accountID: "1")
     let account2 = MAccount.Key(accountID: "2")
     let bond = MAsset.Key(assetID: "Bond")
@@ -28,7 +28,7 @@ class GetLiquidateHoldingsTests: XCTestCase {
         securityMap = MSecurity.makeAllocMap([MSecurity(securityID: "BND", sharePrice: 1),
                                               MSecurity(securityID: "AGG", sharePrice: 1)])
     }
-    
+
     func testNoHoldings() throws {
         let sm = [bnd: MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1)]
         var remainingToSell = 1.0
@@ -89,7 +89,8 @@ class GetLiquidateHoldingsTests: XCTestCase {
     func testTwoHoldingsComplete() throws {
         let sm = MSecurity.makeAllocMap([
             MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1),
-            MSecurity(securityID: "AGG", assetID: "Bond", sharePrice: 1)])
+            MSecurity(securityID: "AGG", assetID: "Bond", sharePrice: 1),
+        ])
         let h1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1)
         let h2 = MHolding(accountID: "1", securityID: "AGG", lotID: "", shareCount: 2)
         let holdings = [h1, h2]
@@ -106,7 +107,8 @@ class GetLiquidateHoldingsTests: XCTestCase {
     func testTwoHoldingsPartial() throws {
         let sm = MSecurity.makeAllocMap([
             MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1),
-            MSecurity(securityID: "AGG", assetID: "Bond", sharePrice: 1)])
+            MSecurity(securityID: "AGG", assetID: "Bond", sharePrice: 1),
+        ])
         let h1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1)
         let h2 = MHolding(accountID: "1", securityID: "AGG", lotID: "", shareCount: 2)
         let holdings = [h1, h2]
@@ -123,7 +125,8 @@ class GetLiquidateHoldingsTests: XCTestCase {
     func testOneHoldingSellingOrphan() throws {
         let minimumAmount = 0.10 // include remainder if <= minimumAmount
         let sm = MSecurity.makeAllocMap([
-            MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1)])
+            MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1),
+        ])
         let h1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1.10)
         var remainingToSell = 1.0
         let actual = LiquidateHolding.getLiquidations(sm, [h1], &remainingToSell, minimumAmount)
@@ -136,7 +139,8 @@ class GetLiquidateHoldingsTests: XCTestCase {
     func testOneHoldingNotSellingEntireHolding() throws {
         let minimumAmount = 0.10 // we'll exceed this
         let sm = MSecurity.makeAllocMap([
-            MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1)])
+            MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1),
+        ])
         let h1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1.11)
         var remainingToSell = 1.0
         let actual = LiquidateHolding.getLiquidations(sm, [h1], &remainingToSell, minimumAmount)
@@ -147,7 +151,8 @@ class GetLiquidateHoldingsTests: XCTestCase {
     func testTwoHoldingsLiquidateWithSmallerGainLoss() throws {
         let securityMap = MSecurity.makeAllocMap([
             MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1),
-            MSecurity(securityID: "AGG", assetID: "Bond", sharePrice: 1)])
+            MSecurity(securityID: "AGG", assetID: "Bond", sharePrice: 1),
+        ])
         let h1 = MHolding(accountID: "1", securityID: "BND", lotID: "", shareCount: 1, shareBasis: 1.0) // flat
         let h2 = MHolding(accountID: "1", securityID: "AGG", lotID: "", shareCount: 2, shareBasis: 1.1) // smaller gainLoss
         let holdingsUnsorted = [h1, h2]

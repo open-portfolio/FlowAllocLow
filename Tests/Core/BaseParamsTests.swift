@@ -10,13 +10,12 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
 class BaseParamsTests: XCTestCase {
-    
     let account1 = MAccount.Key(accountID: "1")
     let bond = MAsset.Key(assetID: "Bond")
 

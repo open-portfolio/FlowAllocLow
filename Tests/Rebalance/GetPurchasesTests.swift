@@ -10,8 +10,8 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
@@ -23,7 +23,7 @@ class GetPurchasesTests: XCTestCase {
     let equities = MAsset.Key(assetID: "Equities")
     let gold = MAsset.Key(assetID: "Gold")
     let re = MAsset.Key(assetID: "RE")
-    
+
     func testNoPurchase() throws {
         let map: RebalanceMap = [:]
         let purchases = Purchase.getPurchases(rebalanceMap: map)

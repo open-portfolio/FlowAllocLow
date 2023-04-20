@@ -14,9 +14,7 @@ import AllocData
 
 import FlowBase
 
-
 public extension MRebalanceSale {
-    
     static func getSales(_ accountSalesMap: AccountSalesMap) -> [MRebalanceSale] {
         accountSalesMap.reduce(into: []) { array, entry in
             let (_, sales) = entry // [AccountKey: [Sale]]
@@ -34,5 +32,4 @@ public extension MRebalanceSale {
             }
         }
     }
-    
 }

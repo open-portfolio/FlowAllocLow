@@ -15,8 +15,7 @@ import AllocData
 import FlowBase
 
 open class LowContext: BaseContext {
-
-    public override init(_ model: BaseModel, strategyKey: StrategyKey, timestamp: Date = Date(), timeZone: TimeZone = TimeZone.current) {
+    override public init(_ model: BaseModel, strategyKey: StrategyKey, timestamp: Date = Date(), timeZone: TimeZone = TimeZone.current) {
         super.init(model, strategyKey: strategyKey, timestamp: timestamp, timeZone: timeZone)
     }
 
@@ -30,30 +29,20 @@ open class LowContext: BaseContext {
         return model.accounts.filter { $0.strategyKey == strategyKey }.sorted()
     }()
 
-    public lazy var activeAccountKeys: [AccountKey] = {
-        activeAccounts.map(\.primaryKey)
-    }()
-    
-    public lazy var activeAccountKeySet: AccountKeySet = {
-        Set(activeAccountKeys)
-    }()
-    
+    public lazy var activeAccountKeys: [AccountKey] = activeAccounts.map(\.primaryKey)
+
+    public lazy var activeAccountKeySet: AccountKeySet = Set(activeAccountKeys)
+
     public lazy var baseAllocs: [AssetValue] = {
         guard let allocs = strategyAllocsMap[strategyKey] else { return [] }
         return (try? AssetValue.normalize(allocs))?.sorted() ?? []
     }()
 
-    public lazy var strategyAllocationsMap: StrategyAllocationsMap = {
-        model.strategyAllocationsMap
-    }()
+    public lazy var strategyAllocationsMap: StrategyAllocationsMap = model.strategyAllocationsMap
 
-    public lazy var strategyAllocsMap: StrategyAssetValuesMap = {
-        model.strategyAllocsMap
-    }()
+    public lazy var strategyAllocsMap: StrategyAssetValuesMap = model.strategyAllocsMap
 
-    public lazy var baseAllocAssetKeys: [AssetKey] = {
-        baseAllocs.map(\.assetKey)
-    }()
+    public lazy var baseAllocAssetKeys: [AssetKey] = baseAllocs.map(\.assetKey)
 
     public lazy var baseAccountHoldingsSummaryMap: AccountAssetHoldingsSummaryMap = {
         // NOTE should be baseAccountKeys (rather than netAccountKeys) to include fixed accounts in HighContext
@@ -63,13 +52,11 @@ open class LowContext: BaseContext {
     public lazy var baseAccountPresentValueMap: AccountPresentValueMap = {
         // NOTE should be activeAccountKeys (rather than netAccountKeys) to include fixed accounts in HighContext
         let map = MAccount.getAccountPresentValueMap(activeAccountKeys, accountHoldingsMap, securityMap)
-        //print(AssetValue.describe(map, prefix: "accountPresentValueMap", style: .currency0))
+        // print(AssetValue.describe(map, prefix: "accountPresentValueMap", style: .currency0))
         return map
     }()
 
-    public lazy var baseAllocMap: AssetValueMap = {
-        AssetValue.getAssetValueMap(from: baseAllocs)
-    }()
+    public lazy var baseAllocMap: AssetValueMap = AssetValue.getAssetValueMap(from: baseAllocs)
 
     // MARK: - Overrideable attributes to be used in Allocation
 
@@ -120,16 +107,12 @@ open class LowContext: BaseContext {
 
     // MARK: - Flow Allocation Support
 
-    public lazy var accountCapsMap: AccountCapsMap = {
-        model.capsMap
-    }()
+    public lazy var accountCapsMap: AccountCapsMap = model.capsMap
 
-    public lazy var assetAccountLimitMap: AssetAccountLimitMap = {
-        getAssetAccountLimitMap(accountKeys: allocatingAccountKeys,
-                                baseAllocs: allocatingAllocs,
-                                accountCapacitiesMap: accountCapacitiesMap,
-                                accountCapsMap: accountCapsMap)
-    }()
+    public lazy var assetAccountLimitMap: AssetAccountLimitMap = getAssetAccountLimitMap(accountKeys: allocatingAccountKeys,
+                                                                                         baseAllocs: allocatingAllocs,
+                                                                                         accountCapacitiesMap: accountCapacitiesMap,
+                                                                                         accountCapsMap: accountCapsMap)
 
     public lazy var accountUserVertLimitMap: AccountUserVertLimitMap = {
         guard let map = try? getAccountUserVertLimitMap(accountKeys: allocatingAccountKeys,
@@ -149,15 +132,11 @@ open class LowContext: BaseContext {
         return map
     }()
 
-    public lazy var accountCapacitiesMap: AccountCapacitiesMap = {
-        getCapacitiesMap(allocatingAccountKeys,
-                         baseAccountPresentValueMap)
-    }()
+    public lazy var accountCapacitiesMap: AccountCapacitiesMap = getCapacitiesMap(allocatingAccountKeys,
+                                                                                  baseAccountPresentValueMap)
 
     // should include both fixed and allocating (aka variable), but not inactive
-    public lazy var baseAccountAssetHoldingsMap: AccountAssetHoldingsMap = {
-        MHolding.getAccountAssetHoldingsMap(accountKeys: activeAccountKeys,
-                                            accountHoldingsMap,
-                                            securityMap)
-    }()
+    public lazy var baseAccountAssetHoldingsMap: AccountAssetHoldingsMap = MHolding.getAccountAssetHoldingsMap(accountKeys: activeAccountKeys,
+                                                                                                               accountHoldingsMap,
+                                                                                                               securityMap)
 }

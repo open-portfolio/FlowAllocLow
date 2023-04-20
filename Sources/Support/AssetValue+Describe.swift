@@ -10,8 +10,8 @@
 
 import Foundation
 
-import FlowBase
 import AllocData
+import FlowBase
 
 public extension AssetValue {
     enum DescribeStyle {

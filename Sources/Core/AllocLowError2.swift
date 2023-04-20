@@ -14,8 +14,7 @@ import AllocData
 
 import FlowBase
 
-
-//TODO combine with AllocLowError1
+// TODO: combine with AllocLowError1
 public enum AllocLowError2: Error, Equatable, CustomStringConvertible {
     case generalFailure(_ msg: String)
     case invalidContext(_ msg: String) // TODO: _ implicit param name

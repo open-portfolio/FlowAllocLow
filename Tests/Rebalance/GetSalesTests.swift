@@ -10,8 +10,8 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
@@ -61,7 +61,8 @@ class GetSalesTests: XCTestCase {
         let rm: RebalanceMap = [bond: -10, equities: 10]
         let sm = MSecurity.makeAllocMap([
             MSecurity(securityID: "BND", assetID: "Bond", sharePrice: 1),
-            MSecurity(securityID: "VOO", assetID: "equities", sharePrice: 1)])
+            MSecurity(securityID: "VOO", assetID: "equities", sharePrice: 1),
+        ])
         let ah = [bond: [h1], equities: [h2]]
         let sales = Sale.getSales(rm, ah, sm)
         XCTAssertEqual(sales.count, 1)
@@ -86,7 +87,8 @@ class GetSalesTests: XCTestCase {
         let h = MHolding(accountID: "1", securityID: "SPAXX", lotID: "", shareCount: 1)
         let rm: RebalanceMap = [cashAssetKey: -amount]
         let sm = MSecurity.makeAllocMap([
-            MSecurity(securityID: "SPAXX", assetID: "Cash", sharePrice: amount)])
+            MSecurity(securityID: "SPAXX", assetID: "Cash", sharePrice: amount),
+        ])
         let ah = [cashAssetKey: [h]]
         let sales = Sale.getSales(rm, ah, sm)
         XCTAssertEqual(sales.count, 0)

@@ -14,7 +14,6 @@ import AllocData
 
 import FlowBase
 
-
 open class BaseTable {
     public var context: LowContext?
     public var params: BaseParams // contains ordering of accounts and assetclasses

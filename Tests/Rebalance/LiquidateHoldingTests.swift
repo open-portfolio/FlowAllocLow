@@ -10,8 +10,8 @@
 
 import XCTest
 
-import FlowBase
 import AllocData
+import FlowBase
 
 @testable import FlowAllocLow
 
@@ -19,9 +19,10 @@ class LiquidateHoldingTests: XCTestCase {
     var securityMap: SecurityMap!
 
     override func setUp() {
-        securityMap = MSecurity.makeAllocMap( [
+        securityMap = MSecurity.makeAllocMap([
             MSecurity(securityID: "BND", sharePrice: 1),
-            MSecurity(securityID: "AGG", sharePrice: 1)])
+            MSecurity(securityID: "AGG", sharePrice: 1),
+        ])
     }
 
     func testFullWithGain() throws {

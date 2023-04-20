@@ -11,8 +11,8 @@
 import Foundation
 import os
 
-import FlowBase
 import AllocData
+import FlowBase
 
 public func getAccountRebalanceMap(accountKeys: [AccountKey],
                                    accountAllocMap: AccountAssetValueMap,
@@ -37,7 +37,7 @@ public func getRebalanceMap(_ allocMap: AssetValueMap,
                             _ holdingsSummaryMap: AssetHoldingsSummaryMap,
                             _ holdingsPresentValue: Double) -> RebalanceMap
 {
-    let amountEpsilon: Double = 0.001 // within nearest tenth of 'penny'
+    let amountEpsilon = 0.001 // within nearest tenth of 'penny'
 
     var zPairs = [(AssetKey, Double)]()
     zPairs.reserveCapacity(allocMap.count)
