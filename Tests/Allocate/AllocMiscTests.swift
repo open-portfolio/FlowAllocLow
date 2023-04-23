@@ -64,14 +64,14 @@ final class AllocMiscTests: XCTestCase {
         """
 
         let securitiesCSV = """
-        securityID,securityAssetID,sharePrice,updatedAt,securityTrackerID
-        CORE,Cash,1.0,2021-07-08,
-        IAU,Gold,34.0,2021-07-08,
-        SPY,LC,430.0,2021-07-08,
-        AGG,Bond,116.0,2021-07-08,
-        GLD,Gold,168.0,2021-07-08,
-        VOO,LC,396.0,2021-07-08,
-        BND,Bond,86.0,2021-07-08,
+        securityID,securityAssetID,sharePrice,updatedAt
+        CORE,Cash,1.0,2021-07-08
+        IAU,Gold,34.0,2021-07-08
+        SPY,LC,430.0,2021-07-08
+        AGG,Bond,116.0,2021-07-08
+        GLD,Gold,168.0,2021-07-08
+        VOO,LC,396.0,2021-07-08
+        BND,Bond,86.0,2021-07-08
         """
 
         var model = BaseModel()

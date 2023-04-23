@@ -100,10 +100,10 @@ open class LowContext: BaseContext {
         return strategyMap[key_]
     }
 
-    public func getTracker(_ key: TrackerKey?) -> MTracker? {
-        guard let key_ = key else { return nil }
-        return trackerMap[key_]
-    }
+//    public func getTracker(_ key: TrackerKey?) -> MTracker? {
+//        guard let key_ = key else { return nil }
+//        return trackerMap[key_]
+//    }
 
     // MARK: - Flow Allocation Support
 
